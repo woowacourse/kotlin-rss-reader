@@ -5,12 +5,13 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
+import java.util.Locale
 
-private val formatters = listOf(
-    DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH),
-    DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
-)
+private val formatters =
+    listOf(
+        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH),
+        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH),
+    )
 
 fun parseSystemDateTime(dateString: String): LocalDateTime {
     formatters.forEach { formatter ->
@@ -23,7 +24,10 @@ fun parseSystemDateTime(dateString: String): LocalDateTime {
     error("DateString($dateString) can't be parsed")
 }
 
-fun formatLocalDateTime(dateTime: LocalDateTime, pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
+fun formatLocalDateTime(
+    dateTime: LocalDateTime,
+    pattern: String = "yyyy-MM-dd HH:mm:ss",
+): String {
     return dateTime.format(DateTimeFormatter.ofPattern(pattern))
 }
 

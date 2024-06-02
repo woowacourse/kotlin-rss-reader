@@ -7,7 +7,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 
 class StudyDocumentTest {
@@ -15,9 +15,10 @@ class StudyDocumentTest {
 
     @BeforeEach
     fun setUp() {
-        document = DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder()
-            .parse("src/test/kotlin/study/document/ex_file.xml")
+        document =
+            DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder()
+                .parse("src/test/kotlin/study/document/ex_file.xml")
     }
 
     @Test

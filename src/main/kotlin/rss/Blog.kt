@@ -7,6 +7,7 @@ data class Blog(
     val posts: BlogPosts,
 ) {
     fun isSameName(name: String): Boolean = blogName == name
+
     fun recentBlogPosts(size: Int): BlogPosts = posts.recentBlogPosts(size)
 
     fun findBlogPostsByTitle(title: String): BlogPosts = posts.findBlogPostsByTitle(title)
@@ -18,6 +19,5 @@ value class BlogPosts(
 ) {
     fun recentBlogPosts(size: Int): BlogPosts = items.sortedByDescending { it.pubDate }.take(size).let(::BlogPosts)
 
-    fun findBlogPostsByTitle(title: String): BlogPosts =
-        items.filter { it.title.contains(title.trim()) }.let(::BlogPosts)
+    fun findBlogPostsByTitle(title: String): BlogPosts = items.filter { it.title.contains(title.trim()) }.let(::BlogPosts)
 }

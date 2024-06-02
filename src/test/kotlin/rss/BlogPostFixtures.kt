@@ -16,15 +16,12 @@ fun fakeBlogPostItem(
     content = content,
 )
 
-fun fakeBlogPost(
-    vararg localDateTime: LocalDateTime,
-) = fakeBlogPost(
-    posts = localDateTime.map { fakeBlogPostItem(pubDate = it) }
-)
+fun fakeBlogPost(vararg localDateTime: LocalDateTime) =
+    fakeBlogPost(
+        posts = localDateTime.map { fakeBlogPostItem(pubDate = it) },
+    )
 
-fun fakeBlogPost(
-    vararg posts: BlogPostItem = emptyArray(),
-) = fakeBlogPost(posts = posts.toList())
+fun fakeBlogPost(vararg posts: BlogPostItem = emptyArray()) = fakeBlogPost(posts = posts.toList())
 
 fun fakeBlogPost(
     name: String = "name",

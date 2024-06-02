@@ -20,26 +20,28 @@ import javax.xml.parsers.DocumentBuilderFactory
 object RssServiceImpl : RssService {
     private val mutex = Mutex()
 
-    override suspend fun fetchBlogPosts(url: List<String>): List<Blog> = withContext(Dispatchers.IO) {
-        coroutineScope {
-            val posts = mutableListOf<Blog>()
-            url.forEach { url ->
-                launch {
-                    val items = fetchRSSFrom(url)
-                    val blogPosts = parseRSS(items)
-                    mutex.withLock {
-                        posts.add(blogPosts)
+    override suspend fun fetchBlogPosts(url: List<String>): List<Blog> =
+        withContext(Dispatchers.IO) {
+            coroutineScope {
+                val posts = mutableListOf<Blog>()
+                url.forEach { url ->
+                    launch {
+                        val items = fetchRSSFrom(url)
+                        val blogPosts = parseRSS(items)
+                        mutex.withLock {
+                            posts.add(blogPosts)
+                        }
                     }
                 }
+                posts
             }
-            posts
         }
-    }
 
-    override suspend fun fetchBlogPost(url: String): Blog = withContext(Dispatchers.IO) {
-        val items = fetchRSSFrom(url)
-        parseRSS(items)
-    }
+    override suspend fun fetchBlogPost(url: String): Blog =
+        withContext(Dispatchers.IO) {
+            val items = fetchRSSFrom(url)
+            parseRSS(items)
+        }
 
     private fun fetchRSSFrom(url: String): NodeList {
         val connection = URL(url).openConnection() as HttpURLConnection
@@ -51,22 +53,23 @@ object RssServiceImpl : RssService {
         return dom.getElementsByTagName("item")
     }
 
-    private suspend fun parseRSS(items: NodeList): Blog = coroutineScope {
-        val posts = mutableListOf<BlogPostItem>()
-        val parentElement = items.item(0).parentNode as Element
-        val blogName = parentElement.toTextContent("title")
-        val blogLink = parentElement.toTextContent("link")
-        val blogDescription = parentElement.toTextContent("description")
-        repeat(items.length) { index ->
-            val element = items.item(index) as Element
-            val title = element.toTextContent("title")
-            val link = element.toTextContent("link")
-            val pubDate = parseSystemDateTime(element.toTextContent("pubDate"))
-            val description = element.toTextContent("description")
-            posts.add(BlogPostItem(title, link, pubDate, description))
+    private suspend fun parseRSS(items: NodeList): Blog =
+        coroutineScope {
+            val posts = mutableListOf<BlogPostItem>()
+            val parentElement = items.item(0).parentNode as Element
+            val blogName = parentElement.toTextContent("title")
+            val blogLink = parentElement.toTextContent("link")
+            val blogDescription = parentElement.toTextContent("description")
+            repeat(items.length) { index ->
+                val element = items.item(index) as Element
+                val title = element.toTextContent("title")
+                val link = element.toTextContent("link")
+                val pubDate = parseSystemDateTime(element.toTextContent("pubDate"))
+                val description = element.toTextContent("description")
+                posts.add(BlogPostItem(title, link, pubDate, description))
+            }
+            Blog(blogName, blogLink, blogDescription, posts.let(::BlogPosts))
         }
-        Blog(blogName, blogLink, blogDescription, posts.let(::BlogPosts))
-    }
 
     private fun documentBuilder(): DocumentBuilder {
         return DocumentBuilderFactory
