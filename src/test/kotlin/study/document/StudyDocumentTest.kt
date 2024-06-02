@@ -48,7 +48,8 @@ class StudyDocumentTest {
         val postTitle = element.getElementsByTagName("title").item(0).textContent
         val link = element.getElementsByTagName("link").item(0).textContent
         val pubDate = element.getElementsByTagName("pubDate").item(0).textContent
-
+        val title = items.item(0).parentNode.nodeName
+        println(title)
         postTitle shouldBe "우리팀은 카프카를 어떻게 사용하고 있을까"
         link shouldBe "https://techblog.woowahan.com/17386/"
         pubDate shouldBe "Thu, 30 May 2024 06:40:10 +0000"
