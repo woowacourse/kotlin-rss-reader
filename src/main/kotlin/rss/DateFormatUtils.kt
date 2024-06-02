@@ -23,6 +23,10 @@ fun parseSystemDateTime(dateString: String): LocalDateTime {
     error("DateString($dateString) can't be parsed")
 }
 
+fun formatLocalDateTime(dateTime: LocalDateTime, pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
+    return dateTime.format(DateTimeFormatter.ofPattern(pattern))
+}
+
 private fun ZonedDateTime.toSystemTime(): LocalDateTime {
     return withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 }
