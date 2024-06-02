@@ -13,6 +13,7 @@ Exception in thread "main" java.lang.IndexOutOfBoundsException: Index 4 out of b
 ```
 
 ```kotlin
+// RssService.kt
 private suspend fun parseRSS(items: NodeList): List<BlogPost> = coroutineScope {
     val posts = mutableListOf<BlogPost>()
     repeat(items.length) { index ->
@@ -24,13 +25,13 @@ private suspend fun parseRSS(items: NodeList): List<BlogPost> = coroutineScope {
             parseSystemDateTime(it)
         }
         val description = element.getElementsByTagName("description").item(0).textContent
-        posts.add(BlogPost(title, link, pubDate, description))
+        mutex.withLock { // mutex 를 사용하여 mutableList 에 레이스 컨디션을 방지하고자함
+            posts.add(BlogPost(title, link, pubDate, description))
+        }
     }
     posts
 }
 ```
-
-solution: `coroutineScope` 를 사용하여 각각의 `launch` 를 `coroutineScope` 내부에서 실행하도록 한다.
 
 - reference
 https://stackoverflow.com/questions/12455602/is-documentbuilder-thread-safe
