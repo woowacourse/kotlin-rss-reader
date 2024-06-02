@@ -13,7 +13,7 @@ object OutputView {
             println("블로그 글이 없습니다.")
             return
         }
-        posts.forEach { showBlogIntroduction(it) }
+        posts.forEachIndexed { index, blog -> showBlogIntroduction(index, blog) }
     }
 
     fun showSearchResult(posts: List<BlogPostItem>) {
@@ -35,9 +35,10 @@ object OutputView {
         }.let(::println)
     }
 
-    private fun showBlogIntroduction(blog: Blog) {
+    private fun showBlogIntroduction(index: Int, blog: Blog) {
         buildString {
             appendLine("====================================")
+            appendLine("${index + 1}번째 블로그")
             appendLine("블로그 이름: ${blog.blogName}")
             appendLine("홈 링크: ${blog.homeLink}")
             appendLine("소개: ${blog.description}")
@@ -48,7 +49,9 @@ object OutputView {
     fun showPost(post: BlogPosts) {
         buildString {
             appendLine("    <최신 글 목록>")
-            post.items.forEach { post ->
+            post.items.forEachIndexed { index, post ->
+                appendLine("    ====================================")
+                appendLine("    ${index + 1}번째 글")
                 appendLine("    제목: ${post.title}")
                 appendLine("    링크: ${post.link}")
                 appendLine("    작성일: ${formatLocalDateTime(post.pubDate, DATE_FORMAT_PATTERN)}")

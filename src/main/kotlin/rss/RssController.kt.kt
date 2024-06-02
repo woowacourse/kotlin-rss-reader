@@ -22,7 +22,7 @@ class RssController {
         blogs: List<Blog>,
     ): Blog {
         var name = blogName
-        while (blogs.none { it.isSameName(blogName) }) {
+        while (blogs.none { it.isSameName(name) }) {
             println("해당 블로그를 찾을 수 없습니다. \n 다시 입력해주세요.")
             name = InputView.inputBlogName()
         }
