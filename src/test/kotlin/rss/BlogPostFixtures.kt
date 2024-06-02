@@ -31,9 +31,9 @@ fun fakeBlogPost(
     homeLink: String = "homeLink",
     description: String = "description",
     posts: List<BlogPostItem> = listOf(fakeBlogPostItem()),
-) = BlogPost(
-    name = name,
+) = Blog(
+    blogName = name,
     homeLink = homeLink,
     description = description,
-    posts = posts,
+    posts = posts.let(::BlogPosts),
 )

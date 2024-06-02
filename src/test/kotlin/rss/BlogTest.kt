@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-class BlogPostTest {
+class BlogTest {
     @Test
     fun `최근에 발행된 글을 가져올 수 있다`() {
         // given
