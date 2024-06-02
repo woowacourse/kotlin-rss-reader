@@ -1,5 +1,7 @@
 package model
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import utils.removeHtmlTags
@@ -11,11 +13,13 @@ object RssParser {
 
     fun getArticles(url: String): List<Article> {
         val articles = mutableListOf<Article>()
-        val xml = xmlParser.parse(url)
-        val channel = xml.getElementsByTagName("channel").item(0)
-        val items = (channel as Element).getElementsByTagName("item")
-        for (i in 0 until items.length) {
-            articles.add(elementToArticle(items, i))
+        runBlocking {
+            val xml = async { xmlParser.parse(url) }
+            val channel = async { xml.await().getElementsByTagName("channel").item(0) }
+            val items = async { (channel.await() as Element).getElementsByTagName("item") }
+            for (i in 0 until items.await().length) {
+                articles.add(elementToArticle(items.await(), i))
+            }
         }
         return articles
     }
