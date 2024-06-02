@@ -8,8 +8,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
-import rss.BlogPost
+import rss.Blog
 import rss.BlogPostItem
+import rss.BlogPosts
 import rss.parseSystemDateTime
 import java.net.HttpURLConnection
 import java.net.URL
@@ -19,9 +20,9 @@ import javax.xml.parsers.DocumentBuilderFactory
 object RssServiceImpl : RssService {
     private val mutex = Mutex()
 
-    override suspend fun fetchBlogPosts(url: List<String>): List<BlogPost> = withContext(Dispatchers.IO) {
+    override suspend fun fetchBlogPosts(url: List<String>): List<Blog> = withContext(Dispatchers.IO) {
         coroutineScope {
-            val posts = mutableListOf<BlogPost>()
+            val posts = mutableListOf<Blog>()
             url.forEach { url ->
                 launch {
                     val items = fetchRSSFrom(url)
@@ -35,7 +36,7 @@ object RssServiceImpl : RssService {
         }
     }
 
-    override suspend fun fetchBlogPost(url: String): BlogPost = withContext(Dispatchers.IO) {
+    override suspend fun fetchBlogPost(url: String): Blog = withContext(Dispatchers.IO) {
         val items = fetchRSSFrom(url)
         parseRSS(items)
     }
@@ -50,7 +51,7 @@ object RssServiceImpl : RssService {
         return dom.getElementsByTagName("item")
     }
 
-    private suspend fun parseRSS(items: NodeList): BlogPost = coroutineScope {
+    private suspend fun parseRSS(items: NodeList): Blog = coroutineScope {
         val posts = mutableListOf<BlogPostItem>()
         val parentElement = items.item(0).parentNode as Element
         val blogName = parentElement.toTextContent("title")
@@ -64,7 +65,7 @@ object RssServiceImpl : RssService {
             val description = element.toTextContent("description")
             posts.add(BlogPostItem(title, link, pubDate, description))
         }
-        BlogPost(blogName, blogLink, blogDescription, posts)
+        Blog(blogName, blogLink, blogDescription, posts.let(::BlogPosts))
     }
 
     private fun documentBuilder(): DocumentBuilder {

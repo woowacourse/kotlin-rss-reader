@@ -1,10 +1,10 @@
 package rss.remote
 
-import rss.BlogPost
+import rss.Blog
 
 interface RssService {
 
-    suspend fun fetchBlogPosts(url: List<String>): List<BlogPost>
+    suspend fun fetchBlogPosts(url: List<String>): List<Blog>
 
-    suspend fun fetchBlogPost(url: String): BlogPost
+    suspend fun fetchBlogPost(url: String): Blog
 }
